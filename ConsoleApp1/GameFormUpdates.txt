@@ -1,0 +1,7 @@
+EKLENEN ÖZELLIKLER:
+
+1. SİLAH SİSTEMİ ✓
+2. TEMA SİSTEMİ ✓  
+3. HİKAYE MODU ✓
+
+Şimdi kalan fonksiyonları eklemek için dosyayı güncelliyorum...
