@@ -1,4 +1,4 @@
-# 🎮 Escape Device - Ultimate Edition
+# 🎮 Text Based Escape Device - Ultimate Edition
 
 A text-based adventure game built with C# featuring both Console and GUI versions. Navigate through challenging levels, defeat enemies, solve puzzles, and face the ultimate boss!
 
