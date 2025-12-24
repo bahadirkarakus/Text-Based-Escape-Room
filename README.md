@@ -145,7 +145,7 @@ This project is for educational purposes.
 
 ## 👨‍💻 Author
 
-**Casper** - C# Game Development Project
+**Bahadır Karakuş** - C# Game Development Project
 
 ---
 
