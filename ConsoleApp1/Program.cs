@@ -543,7 +543,7 @@ namespace ConsoleApp1
             Console.Beep(300, 100);
         }
 
-        static void DoPuzzle()
+ static void DoPuzzle()
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -554,34 +554,13 @@ namespace ConsoleApp1
             
             if (currentLevel == 0)
             {
-                Console.WriteLine("\n  Level 1 Puzzle:");
-                Console.WriteLine("  Enter the code to unlock the door.");
-                Console.WriteLine("  Hint: There should be a note somewhere...");
-                Console.WriteLine("  (Or just try: 0420)");
-                Console.Write("\n  Code: ");
-                if (Console.ReadLine() == "0420")
-                {
-                    puzzle = true;
-                    score += 100;
-                    Console.Beep(1000, 300);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\n  ✓ CORRECT! Exit unlocked!");
-                    CheckAchievement("puzzle");
-                }
-                else
-                {
-                    hp--;
-                    Console.Beep(200, 300);
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n  ✗ WRONG! You lost HP!");
-                }
-            }
-            else if (currentLevel == 1)
-            {
-                Console.WriteLine($"\n  Level {currentLevel + 1} Puzzle - REGEX CHALLENGE:");
-                Console.WriteLine("  Find the 4-digit access code in this encrypted text:");
+                Console.WriteLine("\n  Level 1 Puzzle - REGEX DIGIT EXTRACTION:");
+                Console.WriteLine("  System message received:");
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("  \"Error404-System:LOCKED-Code:7593-Access:DENIED\"");
-                Console.WriteLine("\n  Use a regex pattern to extract the code after 'Code:'");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\n  Extract the 4-digit code using regex pattern.");
+                Console.WriteLine("  Hint: Find the digits after 'Code:'");
                 Console.Write("\n  Enter the 4-digit code: ");
                 string answer = Console.ReadLine()?.Trim() ?? "";
                 
@@ -590,14 +569,20 @@ namespace ConsoleApp1
                 var match = Regex.Match(text, @"Code:(\d{4})");
                 string correctAnswer = match.Success ? match.Groups[1].Value : "7593";
                 
-                if (answer == correctAnswer)
+                // Alternative: check if user found any 4 digits
+                var userMatch = Regex.Match(answer, @"^\d{4}$");
+                bool validFormat = userMatch.Success;
+                
+                if (answer == correctAnswer && validFormat)
                 {
                     puzzle = true;
                     score += 150;
                     Console.Beep(1000, 300);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n  ✓ CORRECT! Code extracted: {correctAnswer}");
-                    Console.WriteLine("  Regex pattern used: Code:(\\d{{4}})");
+                    Console.WriteLine($"\n  ✓ CORRECT! Code successfully extracted: {correctAnswer}");
+                    Console.WriteLine("  Regex pattern used: Code:(\\d{4})");
+                    Console.WriteLine("  \\d matches any digit (0-9)");
+                    Console.WriteLine("  {4} means exactly 4 digits");
                     CheckAchievement("puzzle");
                 }
                 else
@@ -605,19 +590,74 @@ namespace ConsoleApp1
                     hp--;
                     Console.Beep(200, 300);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\n  ✗ WRONG! Correct answer was: {correctAnswer}");
+                    Console.WriteLine("\n  ✗ WRONG! Try again next time.");
+                }
+            }
+            else if (currentLevel == 1)
+            {
+                Console.WriteLine("\n  Level 2 Puzzle - EMAIL VALIDATION WITH REGEX:");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("  Which of these emails is valid?");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\n  A) user@example.com");
+                Console.WriteLine("  B) invalid.email@");
+                Console.WriteLine("  C) @nouser.com");
+                Console.WriteLine("  D) test@@double.com");
+                Console.WriteLine("\n  Hint: Valid email format → username@domain.extension");
+                Console.WriteLine("  Use regex pattern to check: ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+                Console.Write("\n  Answer (A/B/C/D): ");
+                string answer = Console.ReadLine()?.Trim().ToUpper() ?? "";
+                
+                // Validate with actual regex
+                string emailPattern = @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
+                bool isCorrect = answer == "A";
+                
+                if (isCorrect)
+                {
+                    // Verify the answer with regex
+                    string emailA = "user@example.com";
+                    bool regexMatch = Regex.IsMatch(emailA, emailPattern);
+                    
+                    puzzle = true;
+                    score += 150;
+                    Console.Beep(1000, 300);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\n  ✓ CORRECT! user@example.com is valid!");
+                    Console.WriteLine("  \n  Regex breakdown:");
+                    Console.WriteLine("  ^[\\w-\\.]+     → Username (letters, numbers, -, .)");
+                    Console.WriteLine("  @             → Required @ symbol");
+                    Console.WriteLine("  ([\\w-]+\\.)+  → Domain name with dot");
+                    Console.WriteLine("  [\\w-]{2,4}$  → Extension (2-4 chars)");
+                    Console.WriteLine("\n  Why others are INVALID:");
+                    Console.WriteLine("  B) invalid.email@     → Missing domain after @");
+                    Console.WriteLine("  C) @nouser.com        → Missing username before @");
+                    Console.WriteLine("  D) test@@double.com   → Double @@ is invalid");
+                    CheckAchievement("puzzle");
+                }
+                else
+                {
+                    hp--;
+                    Console.Beep(200, 300);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n  ✗ WRONG! Think about the valid email format.");
                 }
             }
             else if (currentLevel == 2)
             {
-                Console.WriteLine($"\n  Level {currentLevel + 1} Puzzle - EMAIL VALIDATION:");
-                Console.WriteLine("  Which of these emails is valid?");
-                Console.WriteLine("  A) user@example.com");
-                Console.WriteLine("  B) invalid.email@");
-                Console.WriteLine("  C) @nouser.com");
-                Console.WriteLine("  D) test@@double.com");
+                Console.WriteLine("\n  Level 3 Puzzle - URL VALIDATION WITH REGEX:");
+                Console.WriteLine("  Which of these URLs has a valid HTTPS format?");
+                Console.WriteLine("\n  A) https://github.com/user/repo");
+                Console.WriteLine("  B) http://example.com");
+                Console.WriteLine("  C) ftp://files.server.net");
+                Console.WriteLine("  D) https://test");
+                Console.WriteLine("\n  Hint: Look for HTTPS protocol + domain + path");
                 Console.Write("\n  Answer (A/B/C/D): ");
-                string answer = Console.ReadLine()?.ToUpper() ?? "";
+                string answer = Console.ReadLine()?.Trim().ToUpper() ?? "";
+                
+                // Regex to validate HTTPS URLs with proper format
+                string httpsPattern = @"^https://[\w.-]+\.[a-z]{2,}/[\w/.-]*$";
+                string urlA = "https://github.com/user/repo";
+                bool isValid = Regex.IsMatch(urlA, httpsPattern);
                 
                 if (answer == "A")
                 {
@@ -625,8 +665,15 @@ namespace ConsoleApp1
                     score += 150;
                     Console.Beep(1000, 300);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\n  ✓ CORRECT! Regex validates email structure!");
-                    Console.WriteLine("  Pattern: ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{{2,4}}$");
+                    Console.WriteLine("\n  ✓ CORRECT! https://github.com/user/repo is valid!");
+                    Console.WriteLine("\n  Regex breakdown:");
+                    Console.WriteLine("  ^https://       → Must start with HTTPS");
+                    Console.WriteLine("  [\\w.-]+\\.[a-z] → Domain with extension");
+                    Console.WriteLine("  /[\\w/.-]*$     → Valid path characters");
+                    Console.WriteLine("\n  Why others are INVALID:");
+                    Console.WriteLine("  B) http://example.com   → HTTP not HTTPS");
+                    Console.WriteLine("  C) ftp://files.server   → FTP not HTTPS");
+                    Console.WriteLine("  D) https://test         → Missing domain extension & path");
                     CheckAchievement("puzzle");
                 }
                 else
@@ -634,22 +681,46 @@ namespace ConsoleApp1
                     hp--;
                     Console.Beep(200, 300);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n  ✗ WRONG! Only user@example.com is valid!");
+                    Console.WriteLine("\n  ✗ WRONG! Remember: HTTPS with proper domain and path.");
                 }
             }
             else
             {
-                Console.WriteLine($"\n  Level {currentLevel + 1} Puzzle:");
-                Console.WriteLine("  What command is used to write to console in C#?");
-                Console.Write("\n  Answer: ");
-                string answer = Console.ReadLine()?.ToLower() ?? "";
-                if (answer == "console.writeline" || answer == "console.write" || answer == "writeline")
+                Console.WriteLine($"\n  Level {currentLevel + 1} Puzzle - ULTIMATE REGEX CHALLENGE:");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("  PASSWORD STRENGTH VALIDATION");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\n  Which password is STRONG enough?");
+                Console.WriteLine("  (Must have: 8+ chars, uppercase, lowercase, digit, special char)");
+                Console.WriteLine("\n  A) Password123!");
+                Console.WriteLine("  B) pass123");
+                Console.WriteLine("  C) HELLO@2024");
+                Console.WriteLine("  D) test");
+                Console.Write("\n  Answer (A/B/C/D): ");
+                string answer = Console.ReadLine()?.Trim().ToUpper() ?? "";
+                
+                // Regex for strong password: 8+ chars, upper, lower, digit, special
+                string strongPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$";
+                string passA = "Password123!";
+                bool isStrong = Regex.IsMatch(passA, strongPattern);
+                
+                if (answer == "A")
                 {
                     puzzle = true;
-                    score += 100;
+                    score += 200;
                     Console.Beep(1000, 300);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\n  ✓ CORRECT!");
+                    Console.WriteLine("\n  ✓ CORRECT! Password123! is STRONG!");
+                    Console.WriteLine("\n  Regex pattern (lookaheads):");
+                    Console.WriteLine("  (?=.*[a-z])     → Has lowercase");
+                    Console.WriteLine("  (?=.*[A-Z])     → Has uppercase");
+                    Console.WriteLine("  (?=.*\\d)        → Has digit");
+                    Console.WriteLine("  (?=.*[@$!%*?&#]) → Has special char");
+                    Console.WriteLine("  {8,}            → At least 8 characters");
+                    Console.WriteLine("\n  Why others are WEAK:");
+                    Console.WriteLine("  B) pass123       → No uppercase, no special char");
+                    Console.WriteLine("  C) HELLO@2024    → No lowercase");
+                    Console.WriteLine("  D) test          → Too short, missing requirements");
                     CheckAchievement("puzzle");
                 }
                 else
@@ -657,12 +728,12 @@ namespace ConsoleApp1
                     hp--;
                     Console.Beep(200, 300);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n  ✗ WRONG!");
+                    Console.WriteLine("\n  ✗ WRONG! Check all password requirements carefully.");
                 }
             }
             
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\n  ENTER...");
+            Console.WriteLine("\n  Press ENTER to continue...");
             Console.ReadKey();
         }
 

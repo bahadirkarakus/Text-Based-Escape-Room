@@ -1,0 +1,601 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+\geometry{
+    a4paper,
+    left=3cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+    headheight=15pt
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Escape Device - Ultimate Edition}
+\fancyhead[R]{Project Report}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Define code style for C#
+\lstdefinestyle{csharpstyle}{
+    language=[Sharp]C,
+    backgroundcolor=\color{gray!10},
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{red!70!black},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=8pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{black!30}
+}
+
+\lstset{style=csharpstyle}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Escape Device - Project Report},
+    pdfauthor={Bahadır Karakuş},
+}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Large International University of Sarajevo\\}
+    \vspace{0.5cm}
+    {\large Faculty of Engineering and Natural Sciences\\}
+    \vspace{0.5cm}
+    {\large CS305 Programming Languages\\}
+    
+    \vspace{3cm}
+    
+    {\Huge\textbf{Text Based Escape Room\\Project Report}}
+    
+    \vspace{3cm}
+    
+    {\large \textbf{Prepared by:}\\}
+    \vspace{0.5cm}
+    {\large Fatih Bahadır Karakuş\\}
+    {\normalsize Student ID: 220302370\\}
+    
+    \vspace{2cm}
+    
+    {\large \textbf{Course Instructor:}\\}
+    \vspace{0.3cm}
+    {\large Mirza Selimovic\\}
+    
+    \vfill
+    
+    {\large Sarajevo, 2025}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The purpose of this project is to design and implement a text-based escape game using the C\# programming language. The game places the player inside a mysterious device and challenges them to escape by navigating through multiple levels, solving puzzles, interacting with enemies, and managing limited resources such as health and oxygen.
+
+The main problem this project aims to solve is the difficulty of applying abstract programming language concepts in a meaningful and practical way. While concepts such as loops, conditional statements, functions, and regular expressions are often taught theoretically, students may struggle to understand how these constructs work together in a complete software system. This project addresses that problem by embedding these concepts into an interactive, real-time application where every player action directly triggers program logic.
+
+The project is particularly relevant to the CS305 Programming Languages course because it demonstrates how core language features are used in a structured and realistic scenario. The game relies heavily on control flow to manage player movement, collision detection, puzzle validation, and game progression. Loops are used to continuously update the game state, while functions are employed to ensure modularity and code readability. Additionally, regular expressions are used in puzzle challenges to perform pattern matching and input validation, reflecting real-world programming use cases.
+
+Another important aspect of the project is state management. The game maintains and updates multiple state variables such as player position, health, oxygen level, inventory, score, and checkpoint data. Managing these states correctly is essential to ensure consistent gameplay, especially when handling events such as player death and respawning.
+
+The expected learning outcomes of this project include:
+\begin{itemize}
+    \item Understanding and applying control flow structures in an interactive environment
+    \item Using loops to manage continuous execution and real-time updates
+    \item Designing and organizing programs using functions and modular logic
+    \item Applying regular expressions for pattern matching and input validation
+    \item Managing application state across multiple game levels
+    \item Improving problem-solving and debugging skills through iterative development
+\end{itemize}
+
+Through this project, students gain hands-on experience in transforming theoretical programming knowledge into a functional software system.
+
+\section{Project Overview}
+
+The project is a Windows Forms-based game titled \textbf{Text Based Escape Device - Ultimate Edition}. Although the visual style resembles a traditional console game, all rendering and user interaction are handled within a Windows Forms interface.
+
+The player wakes up inside a strange mechanical device and must find a way to escape by progressing through multiple levels. Each level introduces new challenges, puzzles, and enemies, increasing the overall difficulty and complexity of gameplay.
+
+The game is designed to be interactive and reactive, meaning that every player input immediately affects the game state. Movement, interactions, puzzle solving, and combat are all handled dynamically within a continuous game loop.
+
+\section{Summary of Features}
+
+The main features of the project include:
+\begin{itemize}
+    \item Multi-level gameplay with progressive difficulty (4 challenging levels)
+    \item Real-time player movement using keyboard input (WASD controls)
+    \item Puzzle-solving mechanics based on logic and regular expressions
+    \item Multiple enemy types: Melee (M), Range (R), and Boss (B)
+    \item Health and oxygen resource management
+    \item Weapon system with shooting mechanics
+    \item Power-ups: Shield, Speed Boost, Invisibility, Health Packs, Oxygen Tanks
+    \item Inventory and achievement tracking system
+    \item Checkpoint-based respawn mechanism
+    \item Customizable visual themes (6 different color themes)
+    \item Three difficulty levels: Easy, Normal, Hard
+\end{itemize}
+
+\section{Scope of the Project}
+
+The scope of this project is limited to a console-style application focusing on programming logic rather than graphical complexity. While the game provides a visually structured ASCII-based interface, advanced graphical rendering, networking features, and persistent save files are beyond the scope of this implementation.
+
+The project focuses primarily on demonstrating programming language concepts rather than game engine development.
+
+\section{Inputs and Outputs}
+
+User inputs are provided through keyboard commands. Movement is controlled using the W, A, S, and D keys, while additional actions such as interaction (E), inventory access (I), shooting (F), pausing (P), theme change (T), and quitting (Q) are mapped to specific keys.
+
+Program outputs are displayed directly in a Windows Forms window using ASCII graphics, colored text, status bars, and system messages. Visual feedback is provided through color-coded elements to enhance user awareness of game events.
+
+\section{User Interaction}
+
+User interaction plays a central role in the game. The player must constantly make decisions based on available resources, enemy positions, and puzzle requirements. Clear messages and visual indicators guide the user through the gameplay experience and provide feedback for both correct and incorrect actions.
+
+The game features:
+\begin{itemize}
+    \item Real-time movement and collision detection
+    \item Interactive elements: doors, keys, puzzles, items
+    \item Combat system with melee and ranged enemies
+    \item Boss battle with 10 HP tracking
+    \item Achievement system tracking player accomplishments
+\end{itemize}
+
+\section{Limitations or Constraints}
+
+Although the project successfully implements the intended gameplay mechanics, it has several limitations and constraints due to the scope of the course and the technologies used.
+
+First, the game is implemented as a Windows Forms application with a grid-based, console-style visual design. While this approach effectively demonstrates programming logic and game mechanics, the graphical rendering is intentionally kept simple and does not include advanced animations or graphical effects.
+
+Second, the project is designed primarily for the Windows operating system. Certain functionalities, such as keyboard input handling and window-based rendering, rely on Windows-specific behavior, which may limit portability to other platforms.
+
+Another limitation is the checkpoint system. Checkpoints are stored in memory during runtime and are not written to external files. As a result, if the program is closed, all progress is lost and the game must be restarted from the beginning.
+
+Additionally, enemy behavior and artificial intelligence are intentionally kept simple. Enemies follow basic movement rules and collision-based interactions without advanced pathfinding algorithms. This design choice was made to keep the focus on core programming language concepts rather than complex AI implementations.
+
+Finally, the size and complexity of levels are constrained by the grid-based layout and window dimensions. Large maps or excessive visual elements may affect alignment and readability depending on the application window size and display resolution.
+
+\section{System Requirements}
+
+This section describes the software environment required to build, run, and test the project successfully.
+
+\subsection{Programming Language}
+
+The project is implemented using the C\# programming language. C\# was chosen because it provides strong support for structured programming, object-oriented design, and rich standard libraries suitable for developing interactive applications.
+
+\subsection{Frameworks and Libraries}
+
+The project uses the .NET 9.0 framework. The main libraries used include:
+\begin{itemize}
+    \item \textbf{System:} Core classes and base data types
+    \item \textbf{System.Threading:} Managing delays and timing effects during gameplay
+    \item \textbf{System.Text.RegularExpressions:} Implementing regex-based puzzle challenges
+    \item \textbf{System.Runtime.InteropServices:} Console window management
+    \item \textbf{System.Drawing:} Graphics operations
+    \item \textbf{System.Windows.Forms:} GUI framework
+\end{itemize}
+
+\subsection{IDE and Tools Used}
+
+The project was developed using Microsoft Visual Studio with integrated debugging tools, IntelliSense, and project management features.
+
+\subsection{Operating System}
+
+The project is designed to run on Windows operating system.
+
+\subsection{Technologies Used}
+
+\subsubsection{Programming Language Features}
+
+\textbf{Functions:} Used extensively to modularize code. Each major functionality is implemented as a separate method.
+
+\textbf{Loops:} A continuous while loop serves as the main game loop. Additional for and foreach loops iterate over maps, enemies, and collections.
+
+\textbf{Conditional Statements:} if-else and switch statements control game logic, movement validation, collision outcomes, and puzzle success/failure.
+
+\textbf{Regular Expressions:} Used in puzzle challenges for pattern matching and input validation.
+
+\subsubsection{Libraries or Modules}
+
+All required libraries are part of the standard .NET framework. No external packages were used.
+
+\subsubsection{External Packages}
+
+No external or third-party packages were used in this project.
+
+\subsection{Program Structure and Logic}
+
+\subsubsection{Major Components}
+
+The program is divided into logical components:
+\begin{itemize}
+    \item \textbf{Main Program and Game Loop}
+    \item \textbf{Game State Management} (GameState.cs)
+    \item \textbf{Level and Map Handling} (LevelData.cs)
+    \item \textbf{Player Interaction and Movement}
+    \item \textbf{Enemy and Boss Logic} (Enemy.cs, Boss.cs)
+    \item \textbf{Puzzle System}
+    \item \textbf{Checkpoint System}
+    \item \textbf{Theme System} (ThemeColors.cs)
+\end{itemize}
+
+\subsubsection{Flowchart and Pseudocode}
+
+Main program flow:
+
+\begin{lstlisting}[language=Python, caption=Main Game Flow Pseudocode]
+START
+    Show Intro
+    Select Difficulty (Easy/Normal/Hard)
+    Select Theme
+    Load Level 1
+    Save Initial Checkpoint
+    
+    WHILE game is running
+        Draw Game Screen
+        Read User Input
+        Process Movement or Interaction
+        Move Enemies and Boss
+        Check Collisions
+        Check Win/Loss Conditions
+    END WHILE
+    
+    Show Ending Screen
+END
+\end{lstlisting}
+
+\subsubsection{Data Structures Used}
+
+\begin{itemize}
+    \item \textbf{Arrays:} Two-dimensional character arrays (char[,]) for game maps
+    \item \textbf{Lists:} Dynamic collections for enemies and achievements
+    \item \textbf{Objects:} Enemy, Boss, GameState classes
+    \item \textbf{Primitive Variables:} Integers and booleans for game state tracking
+\end{itemize}
+
+\subsubsection{Explanation of Key Algorithms}
+
+\textbf{Enemy Movement Algorithm:}
+
+Melee enemies use random movement:
+
+\begin{lstlisting}[caption=Enemy.cs - Random Movement Algorithm]
+public void Move(char[,] map)
+{
+    MoveCounter++;
+    if (MoveCounter < 3) return;
+    MoveCounter = 0;
+
+    int[] dirs = { -1, 1, 0, 0 };
+    int[] dcols = { 0, 0, -1, 1 };
+    
+    for (int i = 0; i < 10; i++)
+    {
+        int idx = rand.Next(4);
+        int newR = Row + dirs[idx];
+        int newC = Col + dcols[idx];
+        
+        if (newR > 0 && newR < map.GetLength(0) - 1 && 
+            newC > 0 && newC < map.GetLength(1) - 1)
+        {
+            if (map[newR, newC] == ' ')
+            {
+                Row = newR;
+                Col = newC;
+                break;
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{Boss Tracking Algorithm:}
+
+The boss tracks the player's position:
+
+\begin{lstlisting}[caption=Boss.cs - Player Tracking Algorithm]
+public void MoveTowardsPlayer(char[,] map, int pRow, int pCol)
+{
+    MoveCounter++;
+    if (MoveCounter < 2) return;
+    MoveCounter = 0;
+
+    int dr = 0, dc = 0;
+    if (pRow < Row) dr = -1;
+    else if (pRow > Row) dr = 1;
+    if (pCol < Col) dc = -1;
+    else if (pCol > Col) dc = 1;
+
+    int newR = Row + dr;
+    int newC = Col + dc;
+    
+    if (newR == pRow && newC == pCol) return;
+    
+    if (newR > 0 && newR < map.GetLength(0) - 1 && 
+        newC > 0 && newC < map.GetLength(1) - 1)
+    {
+        if (map[newR, newC] != '#')
+        {
+            Row = newR;
+            Col = newC;
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Important Code Decisions and Reasoning}
+
+\begin{itemize}
+    \item Console-style interface was chosen to focus on programming logic
+    \item Centralized GameState class simplifies data sharing
+    \item Regex puzzles directly reflect course content
+    \item Checkpoint system improves user experience
+    \item Enemy behavior kept simple to maintain focus on core concepts
+\end{itemize}
+
+\subsection{User Interface – Console Interaction}
+
+\subsubsection{Menu Structure}
+
+The game includes:
+\begin{itemize}
+    \item Introduction screen
+    \item Difficulty selection menu
+    \item Theme selection menu
+    \item Pause menu
+    \item Inventory screen
+\end{itemize}
+
+\subsubsection{Command Inputs}
+
+\begin{itemize}
+    \item \textbf{W/A/S/D:} Movement
+    \item \textbf{E:} Interact
+    \item \textbf{I:} Inventory
+    \item \textbf{P:} Pause
+    \item \textbf{T:} Change theme
+    \item \textbf{F:} Shoot (requires weapon)
+    \item \textbf{Q:} Quit
+\end{itemize}
+
+\subsubsection{Error Handling}
+
+\begin{itemize}
+    \item Invalid movements are blocked
+    \item Warning messages for incomplete exit conditions
+    \item Health penalties for incorrect puzzle inputs
+    \item Confirmation dialogs for critical actions
+\end{itemize}
+
+\subsubsection{Example User Session}
+
+\begin{enumerate}
+    \item Launch game, view introduction
+    \item Select difficulty and theme
+    \item Navigate Level 1, collect items
+    \item Solve puzzle, open door
+    \item Progress through levels 2-4
+    \item Defeat boss in Level 4
+    \item View victory screen
+\end{enumerate}
+
+\section{Team Member Responsibilities}
+
+The project was developed individually by Fatih Bahadır Karakuş.
+
+\subsection{Fatih Bahadır Karakuş}
+
+\subsubsection{Assigned Tasks}
+
+\begin{itemize}
+    \item Designing overall architecture and game flow
+    \item Implementing all game mechanics and systems
+    \item Creating both Console and GUI modes
+    \item Developing all algorithms and logic
+    \item Testing and debugging
+    \item Writing comprehensive documentation
+\end{itemize}
+
+\subsubsection{Specific Features Implemented}
+
+\begin{itemize}
+    \item Grid-based player movement system
+    \item Health and oxygen resource management
+    \item Multi-level progression (4 levels)
+    \item Enemy AI systems (Melee, Range, Boss)
+    \item Puzzle mechanics with regex validation
+    \item Weapon and shooting system
+    \item Power-up collection and effects
+    \item Checkpoint save/restore mechanism
+    \item Achievement tracking system
+    \item Theme customization (6 themes)
+    \item Difficulty level variations
+    \item Inventory and status display
+\end{itemize}
+
+\subsubsection{Testing Responsibilities}
+
+\begin{itemize}
+    \item Testing movement and collision detection
+    \item Verifying exit conditions and level progression
+    \item Testing checkpoint restoration
+    \item Debugging oxygen and health systems
+    \item Testing enemy behavior and boss AI
+    \item Verifying puzzle validation logic
+    \item Playtesting all difficulty levels
+    \item Edge case testing
+\end{itemize}
+
+\subsubsection{Documentation Work}
+
+\begin{itemize}
+    \item Writing project report in LaTeX
+    \item Creating detailed code explanations
+    \item Documenting algorithms and data structures
+    \item Preparing system architecture documentation
+    \item Creating flowcharts and pseudocode
+    \item Organizing GitHub repository
+    \item Writing README.md
+\end{itemize}
+
+\section{Challenges and Solutions}
+
+\subsection{Technical Issues}
+
+One main technical issue involved managing real-time updates within a Windows Forms environment while keeping gameplay responsive. The game loop was structured to separate rendering, input processing, and game logic updates.
+
+Another challenge was handling keyboard input reliably. Input validation was implemented at multiple levels with state checks.
+
+\subsection{Logical Errors}
+
+Several logical errors emerged regarding game progression and state consistency. For example, the exit could initially be reached without completing required objectives.
+
+Solution: Explicit condition checks were introduced that enforce level completion rules in the correct order.
+
+\subsection{Implementation Challenges}
+
+The checkpoint system was one of the most significant implementation challenges. It required saving multiple aspects of game state simultaneously.
+
+Solution: All relevant state variables were stored in a centralized GameState class, allowing atomic save and restore operations.
+
+Enemy reinitialization after checkpoint reload also presented challenges.
+
+Solution: Enemy lists were cleared and repopulated from level data during checkpoint restoration.
+
+\subsection{How the Challenges Were Solved}
+
+Challenges were addressed through:
+\begin{itemize}
+    \item Modular design separating concerns
+    \item Incremental testing after each feature
+    \item Careful state management using GameState class
+    \item Clear validation rules enforcing execution order
+    \item Atomic checkpoint save/restore operations
+    \item Iterative debugging and refinement
+\end{itemize}
+
+\section{Conclusion}
+
+This project successfully demonstrates the design and implementation of \textbf{Escape Device - Ultimate Edition} using C\# and Windows Forms. The main objective was to apply core programming language concepts in a practical manner, achieved through a fully playable, multi-level game.
+
+Key gameplay mechanics such as player movement, enemy interaction, puzzle solving, level progression, and checkpoint-based recovery were successfully implemented. The game reacts dynamically to user input and enforces logical conditions for progression.
+
+From an educational perspective, the project contributed significantly to programming skills development. Core concepts such as control statements, loops, functions, and conditional logic were used extensively. Regular expressions were applied in puzzle challenges for pattern matching and validation. Problem-solving skills were strengthened through debugging, state management, and handling complex interactions.
+
+The original objectives were successfully met. The final implementation integrates programming language concepts into a functional system. Additional features such as achievements, visual themes, multiple difficulty levels, and checkpoints enhanced overall quality.
+
+Future improvements could include:
+\begin{itemize}
+    \item Persistent checkpoints using file-based storage
+    \item Advanced enemy AI with pathfinding algorithms
+    \item More complex level designs
+    \item Sound effects and background music
+    \item Multiplayer functionality
+    \item Level editor for user-generated content
+    \item Enhanced graphics with animations
+    \item More puzzle types and challenges
+\end{itemize}
+
+This project provided valuable opportunity to apply theoretical programming knowledge in a practical context, reinforcing technical and analytical skills essential for software development.
+
+\section{References}
+
+\subsection*{Tutorials and Learning Materials}
+\begin{itemize}
+    \item Microsoft Learn. C\# Programming Guide. Available at: \url{https://learn.microsoft.com/en-us/dotnet/csharp/}
+    \item Windows Forms Programming Guide. Available at: \url{https://learn.microsoft.com/en-us/dotnet/desktop/winforms/}
+\end{itemize}
+
+\subsection*{Documentation Pages}
+\begin{itemize}
+    \item Microsoft Docs. System.Text.RegularExpressions Namespace. Available at: \url{https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions}
+    \item Microsoft Docs. Console and Keyboard Input Handling. Available at: \url{https://learn.microsoft.com/en-us/dotnet/api/system.console}
+\end{itemize}
+
+\subsection*{Books}
+\begin{itemize}
+    \item Albahari, J. and Albahari, B. \textit{C\# in a Nutshell}. O'Reilly Media.
+    \item Freeman, E. and Robson, E. \textit{Head First C\#}. O'Reilly Media.
+\end{itemize}
+
+\subsection*{Code Usage and Attribution}
+All source code used in this project was implemented by the project team. No external code snippets were copied directly from online sources. Online documentation and tutorials were used solely for reference and understanding of programming concepts.
+
+\appendix
+
+\section{Project Repository}
+
+The complete source code for the project \textbf{Escape Device - Ultimate Edition} is hosted on GitHub:
+
+\begin{center}
+\url{https://github.com/bahadirkarakus/Text-Based-Escape-Room}
+\end{center}
+
+The repository includes:
+\begin{itemize}
+    \item Full C\# source code
+    \item Windows Forms project structure
+    \item Game logic implementation
+    \item Documentation and README files
+\end{itemize}
+
+\section{Development Process and Academic Integrity Statement}
+
+\subsection{Independent Development Process}
+
+The project was developed through an independent and iterative development process. All core gameplay mechanics, system logic, and design decisions were implemented manually without relying on automated code generation tools.
+
+\subsection{Use of External Resources}
+
+External resources such as official documentation and programming tutorials were consulted solely for reference and learning purposes. These resources were used to understand language syntax, framework behavior, and best practices, rather than to copy or reuse complete solutions.
+
+\subsection{Academic Integrity Assurance}
+
+The student affirms that:
+\begin{itemize}
+    \item All source code was written by the student
+    \item No third-party code was copied directly
+    \item All implementation decisions were made based on student's understanding
+    \item AI tools were used only for improving documentation clarity and LaTeX formatting
+    \item No AI-generated code was used in implementation
+\end{itemize}
+
+\subsection{Final Compliance Statement}
+
+All content presented in this report reflects the student's original work and understanding. The project fully complies with the academic integrity guidelines and AI usage policies defined by the CS305 Programming Languages course.
+
+\end{document}

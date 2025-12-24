@@ -1101,25 +1101,38 @@ namespace ConsoleApp1
             {
                 case 0:
                     answer = ShowInputDialog(
-                        "Level 1 Puzzle",
-                        "Number: 4203\n\nQuestion: What is the largest digit?");
+                        "Level 1 Puzzle - REGEX DIGIT EXTRACTION",
+                        "System message received:\n" +
+                        "Error404-System:LOCKED-Code:7593-Access:DENIED\n\n" +
+                        "Extract the 4-digit code using regex pattern.\n" +
+                        "Hint: Find the digits after 'Code:'");
                     answer = answer.Trim();
                     if (string.IsNullOrEmpty(answer)) return;
                     
-                    if (answer == "4")
+                    // Regex validation
+                    string text = "Error404-System:LOCKED-Code:7593-Access:DENIED";
+                    var match = System.Text.RegularExpressions.Regex.Match(text, @"Code:(\d{4})");
+                    string correctAnswer = match.Success ? match.Groups[1].Value : "7593";
+                    
+                    if (answer == correctAnswer)
                     {
                         puzzle = true;
                         map[pRow, pCol] = ' ';
                         itemsCollected++;
-                        score += 100;
+                        score += 150;
                         Console.Beep(1000, 150);
-                        MessageBox.Show("Correct! You solved the puzzle.", "Puzzle", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            $"Correct! Code extracted: {correctAnswer}\n\n" +
+                            "Regex pattern: Code:(\\d{4})\n" +
+                            "\\d matches any digit (0-9)\n" +
+                            "{4} means exactly 4 digits",
+                            "Puzzle Solved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 200);
-                        MessageBox.Show("Wrong answer! The largest digit is 4.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Wrong answer! Try to extract the code using regex.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         if (hp <= 0)
                             GameOver("You failed the puzzle and died!");
                     }
@@ -1127,25 +1140,38 @@ namespace ConsoleApp1
                 
                 case 1:
                     answer = ShowInputDialog(
-                        "Level 2 Puzzle",
-                        "Geography Question:\n\nWhat is the capital city of Turkey?");
-                    answer = answer.Trim().ToLower();
+                        "Level 2 Puzzle - EMAIL VALIDATION WITH REGEX",
+                        "Which of these emails is valid?\n\n" +
+                        "A) user@example.com\n" +
+                        "B) invalid.email@\n" +
+                        "C) @nouser.com\n" +
+                        "D) test@@double.com\n\n" +
+                        "Hint: Valid format → username@domain.extension\n" +
+                        "Answer with A, B, C, or D");
+                    answer = answer.Trim().ToUpper();
                     if (string.IsNullOrEmpty(answer)) return;
                     
-                    if (answer == "ankara")
+                    if (answer == "A")
                     {
                         puzzle = true;
                         map[pRow, pCol] = ' ';
                         itemsCollected++;
-                        score += 120;
+                        score += 150;
                         Console.Beep(1000, 150);
-                        MessageBox.Show("Correct! Ankara is the capital of Turkey.", "Puzzle", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            "Correct! user@example.com is valid!\n\n" +
+                            "Regex pattern: ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\n\n" +
+                            "Why others are INVALID:\n" +
+                            "B) invalid.email@ → Missing domain\n" +
+                            "C) @nouser.com → Missing username\n" +
+                            "D) test@@double.com → Double @@ invalid",
+                            "Puzzle Solved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 200);
-                        MessageBox.Show("Wrong answer! The capital of Turkey is Ankara.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Wrong answer! Think about the valid email format.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         if (hp <= 0)
                             GameOver("You failed the puzzle and died!");
                     }
@@ -1153,25 +1179,38 @@ namespace ConsoleApp1
                 
                 case 2:
                     answer = ShowInputDialog(
-                        "Level 3 Puzzle",
-                        "Text: escape device\n\nQuestion: How many letters 'e' are in the text? (enter a number)");
-                    answer = answer.Trim();
+                        "Level 3 Puzzle - URL VALIDATION WITH REGEX",
+                        "Which of these URLs has a valid HTTPS format?\n\n" +
+                        "A) https://github.com/user/repo\n" +
+                        "B) http://example.com\n" +
+                        "C) ftp://files.server.net\n" +
+                        "D) https://test\n\n" +
+                        "Hint: Look for HTTPS protocol + domain + path\n" +
+                        "Answer with A, B, C, or D");
+                    answer = answer.Trim().ToUpper();
                     if (string.IsNullOrEmpty(answer)) return;
                     
-                    if (answer == "4")
+                    if (answer == "A")
                     {
                         puzzle = true;
                         map[pRow, pCol] = ' ';
                         itemsCollected++;
-                        score += 140;
+                        score += 150;
                         Console.Beep(1000, 150);
-                        MessageBox.Show("Correct! You solved the puzzle.", "Puzzle", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            "Correct! https://github.com/user/repo is valid!\n\n" +
+                            "Regex: ^https://[\\w.-]+\\.[a-z]{2,}/[\\w/.-]*$\n\n" +
+                            "Why others are INVALID:\n" +
+                            "B) http:// → HTTP not HTTPS\n" +
+                            "C) ftp:// → FTP not HTTPS\n" +
+                            "D) Missing domain extension & path",
+                            "Puzzle Solved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 200);
-                        MessageBox.Show("Wrong answer! There are 4 letters 'e'.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Wrong answer! Remember: HTTPS with proper domain and path.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         if (hp <= 0)
                             GameOver("You failed the puzzle and died!");
                     }
@@ -1179,25 +1218,43 @@ namespace ConsoleApp1
                 
                 default:
                     answer = ShowInputDialog(
-                        "Level Puzzle",
-                        "Word: ESCAPE\n\nQuestion: Type this word backwards.");
-                    answer = answer.Trim();
+                        "ULTIMATE REGEX CHALLENGE - Password Strength",
+                        "Which password is STRONG enough?\n" +
+                        "(Must have: 8+ chars, uppercase, lowercase, digit, special char)\n\n" +
+                        "A) Password123!\n" +
+                        "B) pass123\n" +
+                        "C) HELLO@2024\n" +
+                        "D) test\n\n" +
+                        "Answer with A, B, C, or D");
+                    answer = answer.Trim().ToUpper();
                     if (string.IsNullOrEmpty(answer)) return;
                     
-                    if (string.Equals(answer, "EPACSE", StringComparison.OrdinalIgnoreCase))
+                    if (answer == "A")
                     {
                         puzzle = true;
                         map[pRow, pCol] = ' ';
                         itemsCollected++;
-                        score += 160;
+                        score += 200;
                         Console.Beep(1000, 150);
-                        MessageBox.Show("Correct! You solved the puzzle.", "Puzzle", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            "Correct! Password123! is STRONG!\n\n" +
+                            "Regex (lookaheads):\n" +
+                            "(?=.*[a-z]) → Has lowercase\n" +
+                            "(?=.*[A-Z]) → Has uppercase\n" +
+                            "(?=.*\\d) → Has digit\n" +
+                            "(?=.*[@$!%*?&#]) → Has special char\n" +
+                            "{8,} → At least 8 characters\n\n" +
+                            "Why others are WEAK:\n" +
+                            "B) No uppercase/special\n" +
+                            "C) No lowercase\n" +
+                            "D) Too short",
+                            "ULTIMATE CHALLENGE COMPLETED!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 200);
-                        MessageBox.Show("Wrong answer! ESCAPE backwards is EPACSE.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Wrong answer! Check all password requirements carefully.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         if (hp <= 0)
                             GameOver("You failed the puzzle and died!");
                     }
