@@ -2,8 +2,8 @@
 
 # 🎮 Text-Based Escape Room
 
-### CS305 Programming Languages - Final Project
-**International University of Sarajevo | 2025**
+
+
 
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-12.0-239120?style=for-the-badge&logo=c-sharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
@@ -41,7 +41,7 @@ The project showcases practical application of programming language concepts tau
 
 ### 🧩 Puzzle System
 - **Regex-Based Challenges** - Educational puzzles requiring pattern matching knowledge
-  - **Level 1**: 4-digit code extraction from system messages
+  - **Level 1**: IP address extraction from security log entries
   - **Level 2**: Email address format validation
   - **Level 3**: HTTPS URL structure verification
   - **Level 4**: Password strength validation with multiple criteria
@@ -189,12 +189,12 @@ This project demonstrates practical application of CS305 course concepts:
 
 ## 🧩 Puzzle Examples
 
-### Level 1: Regex Digit Extraction
+### Level 1: IP Address Extraction from Security Log
 ```
-System Message: "Error404-System:LOCKED-Code:7593-Access:DENIED"
-Task: Extract the 4-digit code using regex pattern
-Pattern: Code:(\d{4})
-Answer: 7593
+Security Log Entry: "[2024-12-26 14:32:15 ERROR 192.168.1.105] User:admin Login:FAILED Attempts:3"
+Task: Extract the IP address from this security log using regex
+Pattern: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
+Answer: 192.168.1.105
 ```
 
 ### Level 2: Email Validation
@@ -246,7 +246,6 @@ Pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$
 | `W` | Weapon | Enables shooting, 30 ammo |
 | `S` | Shield | Blocks 3 hits |
 | `L` | Speed Boost | Double movement, 10 turns |
-| `I` | Invisibility | Enemies can't detect |
 | `D` | Door | Requires key, auto-saves checkpoint |
 | `E` | Exit | Level completion |
 
@@ -329,28 +328,20 @@ This is an educational project for CS305. Contributions for bug fixes and featur
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
 
-This project is developed for educational purposes as part of CS305 Programming Languages course at International University of Sarajevo.
-
-**Use of AI Tools**: AI-powered tools such as GitHub Copilot were utilized during development for debugging, code suggestions, and refining implementations designed by the students.
 
 ## 👨‍💻 Authors
 
-**Fatih Bahadır Karakuş** - Student ID: 220302370  
-**Sait Yücel** - Student ID: 220302479
+**Fatih Bahadır Karakuş** 
 
-**Course**: CS305 - Programming Languages  
-**Instructor**: Mirza Selimovic  
-**Lab Instructor**: Ismar Aganovic  
-**Institution**: International University of Sarajevo  
-**Year**: 2025
+
+
 
 ## 📞 Contact & Links
 
 - 🔗 **GitHub Repository**: [Text-Based-Escape-Room](https://github.com/bahadirkarakus/Text-Based-Escape-Room)
-- 📧 **Email**: 220302370@ius.edu.ba
-- 🏫 **University**: [International University of Sarajevo](https://www.ius.edu.ba)
+- 📧 **Email**: bahadirkarakus261@gmail.com
+
 
 ---
 
