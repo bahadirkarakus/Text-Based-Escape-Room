@@ -24,6 +24,7 @@ namespace ConsoleApp1
         public static int CheckpointScore = 0;
         public static bool CheckpointKey = false, CheckpointPuzzle = false, CheckpointDoorOpened = false;
         public static int CheckpointMoves = 0, CheckpointItems = 0;
+        public static bool CheckpointShieldActive = false;
         public static int DeathCount = 0;
         
         // Power-ups

@@ -214,6 +214,16 @@ namespace ConsoleApp1
             key = false;
             GameState.DoorOpened = false;
 
+            // Level başında oksijen bonusu (zorluk moduna göre)
+            int oxygenBonus = difficulty switch
+            {
+                "EASY" => 40,
+                "NORMAL" => 30,
+                "HARD" => 20,
+                _ => 30
+            };
+            o2 = Math.Min(o2 + oxygenBonus, 100);
+
             // Level başında checkpoint KAYDETME (sadece ilk çağrıda kaydet)
             // Door açıldığında checkpoint kaydedilecek
 
@@ -252,7 +262,7 @@ namespace ConsoleApp1
             else if (currentLevel == 3)
             {
                 Console.WriteLine("  You are very close to the core.");
-                Console.WriteLine("  Power surges, distant sirens and the breath of the central AI are right behind you.");
+                Console.WriteLine("  Power surges, distant sirens and the breath of the central  are right behind you.");
                 Console.WriteLine("  This is the final section: either you defeat the device or you stay trapped inside forever.");
             }
             else
@@ -995,6 +1005,7 @@ namespace ConsoleApp1
             GameState.CheckpointDoorOpened = GameState.DoorOpened;
             GameState.CheckpointMoves = moveCount;
             GameState.CheckpointItems = itemsCollected;
+            GameState.CheckpointShieldActive = GameState.ShieldActive;
             
             // Checkpoint kaydedildi mesajı (kısa süre göster)
             Console.ForegroundColor = ConsoleColor.Green;
@@ -1021,6 +1032,7 @@ namespace ConsoleApp1
             bool cpDoorOpened = GameState.CheckpointDoorOpened;
             int cpMoves = GameState.CheckpointMoves;
             int cpItems = GameState.CheckpointItems;
+            bool cpShieldActive = GameState.CheckpointShieldActive;
 
             // Level'ı yükle ama checkpoint KAYDETME
             currentLevel = cpLevel;
@@ -1059,6 +1071,7 @@ namespace ConsoleApp1
             GameState.DoorOpened = cpDoorOpened;
             moveCount = cpMoves;
             itemsCollected = cpItems;
+            GameState.ShieldActive = cpShieldActive;
             
             // Oyunun devam ettiğinden emin ol
             run = true;

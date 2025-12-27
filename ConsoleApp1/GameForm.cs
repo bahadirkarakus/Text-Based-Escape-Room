@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using System.Media;
+using System.IO;
 using Timer = System.Windows.Forms.Timer;
 
 namespace ConsoleApp1
@@ -33,7 +34,7 @@ namespace ConsoleApp1
                 { '#',' ','#',' ',' ',' ',' ','M',' ',' ',' ',' ',' ',' ',' ','R',' ','O',' ','#' },
                 { '#',' ','#','#','#','#','#',' ','#','#','#','#','#',' ','#','#','#','#',' ','#' },
                 { '#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','H',' ','#' },
-                { '#',' ','#',' ','#','#','#',' ','#','#','#','#','#',' ','#','#','#','D','I','#' },
+                { '#',' ','#',' ','#','#','#',' ','#','#','#','#','#',' ','#','#','#','D',' ','#' },
                 { '#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','E',' ','#' },
                 { '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#' }
             },
@@ -42,11 +43,12 @@ namespace ConsoleApp1
                 { '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#' },
                 { '#','@',' ','M',' ',' ','P',' ','W',' ',' ','R',' ',' ',' ','K',' ','M',' ','#' },
                 { '#',' ','#','#','#','#','#','#','#',' ','#','#','#','#','#','#','#','#','S','#' },
-                { '#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#' },
+                { '#',' ',' ',' ',' ','R',' ',' ',' ',' ',' ',' ',' ',' ','R',' ',' ',' ',' ','#' },
                 { '#',' ','#','H',' ','#','O',' ','#',' ','#',' ','#','H',' ','#','F',' ','#','#' },
                 { '#',' ','R',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','R',' ','#' },
                 { '#',' ','#','#','#','#','#','#','#',' ','#','#','#','#','#','#','#','D','L','#' },
                 { '#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','E',' ','#' },
+                { '#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#' },
                 { '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#' }
             },
             // LEVEL 4 - BOSS LEVEL
@@ -66,7 +68,7 @@ namespace ConsoleApp1
         // Game state
         private int currentLevel = 0;
         private char[,] map = null!;
-        private int pRow = 1, pCol = 1, maxHp = 5, hp = 5, o2 = 100, score = 0;
+        private int pRow = 1, pCol = 1, maxHp = 5, hp = 5, o2 = 150, score = 0;
         private bool key = false, puzzle = false;
         private string difficulty = "NORMAL";
         private int moveCount = 0, itemsCollected = 0;
@@ -80,7 +82,7 @@ namespace ConsoleApp1
         // Checkpoint system
         private int checkpointLevel = 0;
         private int checkpointRow = 1, checkpointCol = 1;
-        private int checkpointHp = 5, checkpointO2 = 100;
+        private int checkpointHp = 5, checkpointO2 = 150;
         private int checkpointScore = 0;
         private bool checkpointKey = false, checkpointPuzzle = false;
         private int checkpointMoves = 0, checkpointItems = 0;
@@ -89,6 +91,10 @@ namespace ConsoleApp1
         private bool checkpointHasWeapon = false;
         private int checkpointAmmo = 0;
         private int deathCount = 0;
+        private char[,]? checkpointMap = null;
+        private List<Enemy> checkpointEnemies = new List<Enemy>();
+        private List<ShooterEnemy> checkpointShooterEnemies = new List<ShooterEnemy>();
+        private Boss? checkpointBoss = null;
         
         // Weapon System
         private List<Bullet> bullets = new List<Bullet>();
@@ -112,6 +118,9 @@ namespace ConsoleApp1
         
         // Story Mode
         private List<string> levelStories = new List<string>();
+        
+        // Background Music
+        private SoundPlayer? backgroundMusic = null;
         
         private Timer gameTimer = null!;
         private const int CellSize = 30;
@@ -171,6 +180,7 @@ namespace ConsoleApp1
                 if (pCol < Col) dc = -1;
                 else if (pCol > Col) dc = 1;
 
+                // Önce ideal hareketi dene
                 int newR = Row + dr;
                 int newC = Col + dc;
                 
@@ -180,6 +190,62 @@ namespace ConsoleApp1
                     {
                         Row = newR;
                         Col = newC;
+                        return;
+                    }
+                }
+                
+                // Duvar varsa alternatif yollar dene
+                // Önce sadece yatay hareket dene
+                if (dc != 0)
+                {
+                    newR = Row;
+                    newC = Col + dc;
+                    if (newR > 0 && newR < map.GetLength(0) - 1 && newC > 0 && newC < map.GetLength(1) - 1)
+                    {
+                        if (map[newR, newC] == ' ')
+                        {
+                            Row = newR;
+                            Col = newC;
+                            return;
+                        }
+                    }
+                }
+                
+                // Sonra sadece dikey hareket dene
+                if (dr != 0)
+                {
+                    newR = Row + dr;
+                    newC = Col;
+                    if (newR > 0 && newR < map.GetLength(0) - 1 && newC > 0 && newC < map.GetLength(1) - 1)
+                    {
+                        if (map[newR, newC] == ' ')
+                        {
+                            Row = newR;
+                            Col = newC;
+                            return;
+                        }
+                    }
+                }
+                
+                // Hala hareket edemediyse, rastgele bir yön dene
+                int[] dirs = { -1, 1, 0, 0 };
+                int[] dcols = { 0, 0, -1, 1 };
+                Random rand = new Random();
+                
+                for (int i = 0; i < 4; i++)
+                {
+                    int idx = rand.Next(4);
+                    newR = Row + dirs[idx];
+                    newC = Col + dcols[idx];
+                    
+                    if (newR > 0 && newR < map.GetLength(0) - 1 && newC > 0 && newC < map.GetLength(1) - 1)
+                    {
+                        if (map[newR, newC] == ' ')
+                        {
+                            Row = newR;
+                            Col = newC;
+                            return;
+                        }
                     }
                 }
             }
@@ -244,6 +310,7 @@ namespace ConsoleApp1
             InitializeThemes();
             InitializeStories();
             InitializeComponents();
+            InitializeMusic();
             ShowIntroStory();
             ShowDifficultyDialog();
             LoadLevel(0);
@@ -252,6 +319,40 @@ namespace ConsoleApp1
             gameTimer.Interval = 200;
             gameTimer.Tick += GameTimer_Tick;
             gameTimer.Start();
+        }
+
+        private void InitializeMusic()
+        {
+            try
+            {
+                // Müzik dosyası konumu: ConsoleApp1/music/background.wav veya background.mp3
+                string musicPath = Path.Combine(AppContext.BaseDirectory, "music", "background.wav");
+                
+                if (File.Exists(musicPath))
+                {
+                    backgroundMusic = new SoundPlayer(musicPath);
+                    backgroundMusic.PlayLooping();
+                }
+                else
+                {
+                    // Alternatif isimler dene
+                    string[] alternatives = { "stranger_things.wav", "shape_of_my_heart.wav", "game_music.wav", "background_music.wav" };
+                    foreach (var alt in alternatives)
+                    {
+                        string altPath = Path.Combine(AppContext.BaseDirectory, "music", alt);
+                        if (File.Exists(altPath))
+                        {
+                            backgroundMusic = new SoundPlayer(altPath);
+                            backgroundMusic.PlayLooping();
+                            break;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Müzik yüklenemezse sessiz devam et
+            }
         }
 
         private void InitializeThemes()
@@ -484,7 +585,7 @@ namespace ConsoleApp1
                     difficulty = "EASY";
                     maxHp = 8;
                     hp = 8;
-                    o2 = 150;
+                    o2 = 200;
                     dialog.Close();
                 };
                 dialog.Controls.Add(easyBtn);
@@ -519,7 +620,7 @@ namespace ConsoleApp1
                     difficulty = "HARD";
                     maxHp = 3;
                     hp = 3;
-                    o2 = 80;
+                    o2 = 130;
                     dialog.Close();
                 };
                 dialog.Controls.Add(hardBtn);
@@ -943,7 +1044,7 @@ namespace ConsoleApp1
                     
                 case 'O':
                     map[pRow, pCol] = ' ';
-                    o2 = Math.Min(o2 + 30, 100);
+                    o2 = Math.Min(o2 + 40, 200);
                     itemsCollected++;
                     score += 30;
                     Console.Beep(500, 100);
@@ -959,7 +1060,7 @@ namespace ConsoleApp1
                     score += (hasDoubleScore ? 200 : 100);
                     Console.Beep(1200, 100);
                     Console.Beep(1400, 150);
-                    MessageBox.Show("SHIELD activated! Protects from 3 hits!", "Power-up!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"SHIELD activated! Protects from 3 hits!\n\nShield Status: {hasShield}\nShield Hits: {shieldHits}", "Power-up!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     break;
                     
                 case 'S':
@@ -1101,18 +1202,18 @@ namespace ConsoleApp1
             {
                 case 0:
                     answer = ShowInputDialog(
-                        "Level 1 Puzzle - REGEX DIGIT EXTRACTION",
-                        "System message received:\n" +
-                        "Error404-System:LOCKED-Code:7593-Access:DENIED\n\n" +
-                        "Extract the 4-digit code using regex pattern.\n" +
-                        "Hint: Find the digits after 'Code:'");
+                        "Level 1 Puzzle - LOG PARSING WITH REGEX",
+                        "Security log received:\n" +
+                        "[2024-12-26 14:32:15 ERROR 192.168.1.105] User:admin Login:FAILED Attempts:3\n\n" +
+                        "Extract the IP address from this security log using regex.\n" +
+                        "Hint: IP format is XXX.XXX.XXX.XXX (numbers separated by dots)");
                     answer = answer.Trim();
                     if (string.IsNullOrEmpty(answer)) return;
                     
                     // Regex validation
-                    string text = "Error404-System:LOCKED-Code:7593-Access:DENIED";
-                    var match = System.Text.RegularExpressions.Regex.Match(text, @"Code:(\d{4})");
-                    string correctAnswer = match.Success ? match.Groups[1].Value : "7593";
+                    string text = "[2024-12-26 14:32:15 ERROR 192.168.1.105] User:admin Login:FAILED Attempts:3";
+                    var match = System.Text.RegularExpressions.Regex.Match(text, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
+                    string correctAnswer = match.Success ? match.Value : "192.168.1.105";
                     
                     if (answer == correctAnswer)
                     {
@@ -1122,17 +1223,19 @@ namespace ConsoleApp1
                         score += 150;
                         Console.Beep(1000, 150);
                         MessageBox.Show(
-                            $"Correct! Code extracted: {correctAnswer}\n\n" +
-                            "Regex pattern: Code:(\\d{4})\n" +
-                            "\\d matches any digit (0-9)\n" +
-                            "{4} means exactly 4 digits",
+                            $"Correct! IP Address extracted: {correctAnswer}\n\n" +
+                            "Regex pattern: \\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\n\n" +
+                            "Breakdown:\n" +
+                            "\\d{1,3} → matches 1-3 digits\n" +
+                            "\\. → matches literal dot\n" +
+                            "Repeats 4 times for IP format",
                             "Puzzle Solved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 200);
-                        MessageBox.Show("Wrong answer! Try to extract the code using regex.", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Wrong answer! Try to extract the IP address using regex.\nFormat: XXX.XXX.XXX.XXX", "Puzzle Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         if (hp <= 0)
                             GameOver("You failed the puzzle and died!");
                     }
@@ -1345,12 +1448,14 @@ namespace ConsoleApp1
                     {
                         shieldHits--;
                         Console.Beep(1000, 100);
+                        Console.WriteLine($"[DEBUG] SHIELD BLOCKED! Remaining: {shieldHits} hits");
                         if (shieldHits == 0) hasShield = false;
                     }
                     else
                     {
                         hp--;
                         Console.Beep(300, 150);
+                        Console.WriteLine($"[DEBUG] HIT! Shield status: {hasShield}, Hits: {shieldHits}, HP: {hp}");
                         if (hp <= 0)
                         {
                             GameOver("Killed by enemy!");
@@ -1550,6 +1655,27 @@ namespace ConsoleApp1
             checkpointItems = itemsCollected;
             checkpointHasWeapon = hasWeapon;
             checkpointAmmo = ammo;
+            
+            // Map ve düşman durumlarını kaydet
+            checkpointMap = (char[,])map.Clone();
+            checkpointEnemies.Clear();
+            foreach (var enemy in enemies)
+            {
+                checkpointEnemies.Add(new Enemy { Row = enemy.Row, Col = enemy.Col, MoveCounter = enemy.MoveCounter });
+            }
+            checkpointShooterEnemies.Clear();
+            foreach (var shooter in shooterEnemies)
+            {
+                checkpointShooterEnemies.Add(new ShooterEnemy { Row = shooter.Row, Col = shooter.Col, ShootCounter = shooter.ShootCounter });
+            }
+            if (boss != null)
+            {
+                checkpointBoss = new Boss { Row = boss.Row, Col = boss.Col, Hp = boss.Hp, MoveCounter = boss.MoveCounter };
+            }
+            else
+            {
+                checkpointBoss = null;
+            }
         }
         
         private void LoadCheckpoint()
@@ -1571,31 +1697,63 @@ namespace ConsoleApp1
 
             // Level'ı yükle
             currentLevel = cpLevel;
-            map = (char[,])levels[currentLevel].Clone();
-            enemies.Clear();
-            boss = null;
             
-            // Haritadaki düşmanları ve boss'u yeniden oluştur
-            for (int r = 0; r < map.GetLength(0); r++)
+            // Eğer checkpoint map'i varsa onu kullan, yoksa temiz map yükle
+            if (checkpointMap != null)
             {
-                for (int c = 0; c < map.GetLength(1); c++)
+                map = (char[,])checkpointMap.Clone();
+                
+                // Kaydedilmiş düşmanları geri yükle
+                enemies.Clear();
+                foreach (var enemy in checkpointEnemies)
                 {
-                    if (map[r, c] == '@')
-                        map[r, c] = ' ';
-                    else if (map[r, c] == 'M')
+                    enemies.Add(new Enemy { Row = enemy.Row, Col = enemy.Col, MoveCounter = enemy.MoveCounter });
+                }
+                
+                shooterEnemies.Clear();
+                foreach (var shooter in checkpointShooterEnemies)
+                {
+                    shooterEnemies.Add(new ShooterEnemy { Row = shooter.Row, Col = shooter.Col, ShootCounter = shooter.ShootCounter });
+                }
+                
+                if (checkpointBoss != null)
+                {
+                    boss = new Boss { Row = checkpointBoss.Row, Col = checkpointBoss.Col, Hp = checkpointBoss.Hp, MoveCounter = checkpointBoss.MoveCounter };
+                }
+                else
+                {
+                    boss = null;
+                }
+            }
+            else
+            {
+                // İlk kez checkpoint yoksa normal yükleme yap
+                map = (char[,])levels[currentLevel].Clone();
+                enemies.Clear();
+                shooterEnemies.Clear();
+                boss = null;
+                
+                for (int r = 0; r < map.GetLength(0); r++)
+                {
+                    for (int c = 0; c < map.GetLength(1); c++)
                     {
-                        enemies.Add(new Enemy { Row = r, Col = c });
-                        map[r, c] = ' ';
-                    }
-                    else if (map[r, c] == 'B')
-                    {
-                        boss = new Boss { Row = r, Col = c };
-                        map[r, c] = ' ';
-                    }
-                    else if (map[r, c] == 'D' && cpDoorOpened)
-                    {
-                        // Eğer checkpoint'te kapı açıktıysa, haritadan kaldır
-                        map[r, c] = ' ';
+                        if (map[r, c] == '@')
+                            map[r, c] = ' ';
+                        else if (map[r, c] == 'M')
+                        {
+                            enemies.Add(new Enemy { Row = r, Col = c });
+                            map[r, c] = ' ';
+                        }
+                        else if (map[r, c] == 'R')
+                        {
+                            shooterEnemies.Add(new ShooterEnemy { Row = r, Col = c });
+                            map[r, c] = ' ';
+                        }
+                        else if (map[r, c] == 'B')
+                        {
+                            boss = new Boss { Row = r, Col = c };
+                            map[r, c] = ' ';
+                        }
                     }
                 }
             }
@@ -1615,6 +1773,7 @@ namespace ConsoleApp1
             ammo = cpAmmo;
             
             bullets.Clear();
+            enemyBullets.Clear();
             
             UpdateLabels();
             gamePanel.Invalidate();
