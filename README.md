@@ -246,7 +246,6 @@ Pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$
 | `W` | Weapon | Enables shooting, 30 ammo |
 | `S` | Shield | Blocks 3 hits |
 | `L` | Speed Boost | Double movement, 10 turns |
-| `I` | Invisibility | Enemies can't detect |
 | `D` | Door | Requires key, auto-saves checkpoint |
 | `E` | Exit | Level completion |
 
