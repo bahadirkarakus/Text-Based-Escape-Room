@@ -2,8 +2,8 @@
 
 # 🎮 Text-Based Escape Room
 
-### CS305 Programming Languages - Final Project
-**International University of Sarajevo | 2025**
+
+
 
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-12.0-239120?style=for-the-badge&logo=c-sharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
