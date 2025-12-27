@@ -349,6 +349,6 @@ This is an educational project for CS305. Contributions for bug fixes and featur
 
 **Made with ❤️ using C# and Windows Forms**
 
-*Part of CS305 Programming Languages Course Project*
+
 
 </div>
