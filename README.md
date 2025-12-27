@@ -41,7 +41,7 @@ The project showcases practical application of programming language concepts tau
 
 ### 🧩 Puzzle System
 - **Regex-Based Challenges** - Educational puzzles requiring pattern matching knowledge
-  - **Level 1**: IP address extraction from security logs
+  - **Level 1**: 4-digit code extraction from system messages
   - **Level 2**: Email address format validation
   - **Level 3**: HTTPS URL structure verification
   - **Level 4**: Password strength validation with multiple criteria
