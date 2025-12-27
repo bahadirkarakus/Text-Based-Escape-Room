@@ -329,28 +329,20 @@ This is an educational project for CS305. Contributions for bug fixes and featur
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
 
-This project is developed for educational purposes as part of CS305 Programming Languages course at International University of Sarajevo.
-
-**Use of AI Tools**: AI-powered tools such as GitHub Copilot were utilized during development for debugging, code suggestions, and refining implementations designed by the students.
 
 ## 👨‍💻 Authors
 
-**Fatih Bahadır Karakuş** - Student ID: 220302370  
-**Sait Yücel** - Student ID: 220302479
+**Fatih Bahadır Karakuş** 
 
-**Course**: CS305 - Programming Languages  
-**Instructor**: Mirza Selimovic  
-**Lab Instructor**: Ismar Aganovic  
-**Institution**: International University of Sarajevo  
-**Year**: 2025
+
+
 
 ## 📞 Contact & Links
 
 - 🔗 **GitHub Repository**: [Text-Based-Escape-Room](https://github.com/bahadirkarakus/Text-Based-Escape-Room)
-- 📧 **Email**: 220302370@ius.edu.ba
-- 🏫 **University**: [International University of Sarajevo](https://www.ius.edu.ba)
+- 📧 **Email**: bahadirkarakus261@gmail.com
+
 
 ---
 
